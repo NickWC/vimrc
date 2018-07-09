@@ -20,8 +20,8 @@ silent! if plug#begin('~/.vim/plugged')
     " UI {
         Plug 'Twinside/vim-cuteErrorMarker'
         Plug 'Yggdroot/indentLine'
-        Plug 'vim-airline/vim-airline'
-        Plug 'vim-airline/vim-airline-themes'
+        " Plug 'vim-airline/vim-airline'
+        " Plug 'vim-airline/vim-airline-themes'
         Plug 'chriskempson/vim-tomorrow-theme'
         Plug 'NLKNguyen/papercolor-theme'
         Plug 'chriskempson/base16-vim'
@@ -241,26 +241,37 @@ endif
 " }
 
 " Status line {
-    " if has('statusline')
-    "     set laststatus=2
-    "     set statusline=\ %{HasPaste()}%<%-15.25(%f%)%m%r%h\ %w\ \
-    "     set statusline+=\ \ \ [%{&ff}/%Y]
-    "     set statusline+=\ \ \ %<%20.30(%{hostname()}:%{CurDir()}%)\
-    "     set statusline+=%=%-10.(%l,%c%V%)\ %p%%/%L
-    "
-    "     function! CurDir()
-    "         let curdir = substitute(getcwd(), $HOME, "~", "")
-    "         return curdir
-    "     endfunction
-    "
-    "     function! HasPaste()
-    "         if &paste
-    "             return '[PASTE]'
-    "         else
-    "             return ''
-    "         endif
-    "     endfunction
-    " endif
+    if has('statusline')
+        set laststatus=2
+
+        " function! ModifiedColor(mode)
+        "     if a:mode == 'i'
+        "         hi StatusLine guibg=Purple guifg=black ctermfg=5 ctermbg=0
+        "     elseif a:mode == 'r'
+        "         hi StatusLine guibg=Cyan guifg=black ctermfg=11 ctermbg=0
+        "     else
+        "         hi StatusLine guibg=DarkRed guifg=black ctermfg=1 ctermbg=0
+        "     endif
+        " endfunction
+        " au InsertEnter * call ModifiedColor(v:insertmode)
+        " au InsertLeave * hi StatusLine guibg=DarkSlateGrey guifg=White ctermfg=14 ctermbg=7
+        "
+        " hi StatusLine guibg=DarkSlateGrey guifg=White ctermfg=14 ctermbg=7
+
+        " Format
+        function! s:statusline_expr()
+            let mod = "%{&modified ? '[+] ' : !&modifiable ? '[x] ' : ''}"
+            let ro  = "%{&readonly ? '[RO] ' : ''}"
+            let ft  = "%{len(&filetype) ? '['.&filetype.'] ' : ''}"
+            let fug = "%{exists('g:loaded_fugitive') ? fugitive#statusline() : ''}"
+            let sep = ' %= '
+            let pos = ' %-12(%l : %c%V%) '
+            let pct = ' %P'
+
+            return '[%n] %F %<'.mod.ro.ft.fug.sep.pos.'%*'.pct
+        endfunction
+        let &statusline = s:statusline_expr()
+    endif
 " }
 
 " Restore cursor to file position in previous editing session {
@@ -408,52 +419,52 @@ endif
 "---------------------------------------------------
 " UI {
     " vim-airline {
-        let g:airline_theme = "tomorrow"
-        let g:airline_powerline_fonts = 0
-        let g:airline#extensions#whitespace#enabled = 0
-
-        silent! if emoji#available()
-            let s:ft_emoji = map({
-                \ 'c':              'baby_chick',
-                \ 'clojure':        'lollipop',
-                \ 'coffee':         'coffee',
-                \ 'cpp':            'chicken',
-                \ 'css':            'art',
-                \ 'eruby':          'ring',
-                \ 'gitcommit':      'soon',
-                \ 'haml':           'hammer',
-                \ 'help':           'angel',
-                \ 'html':           'herb',
-                \ 'java':           'older_man',
-                \ 'javascript':     'monkey',
-                \ 'javascript.jsx': 'monkey',
-                \ 'make':           'seedling',
-                \ 'markdown':       'book',
-                \ 'perl':           'camel',
-                \ 'python':         'snake',
-                \ 'ruby':           'gem',
-                \ 'scala':          'barber',
-                \ 'sh':             'shell',
-                \ 'slim':           'dancer',
-                \ 'text':           'books',
-                \ 'vim':            'pig',
-                \ 'yaml':           'yum',
-                \ 'yaml.jinja':     'yum'
-            \ }, 'emoji#for(v:val)')
-
-            function! S_filetype()
-            if empty(&filetype)
-              return emoji#for('grey_question')
-            else
-              return get(s:ft_emoji, &filetype, '['.&filetype.']')
-            endif
-            endfunction
-
-            function! AirlineOverwrite()
-                let g:airline_section_c = airline#section#create(['%{S_filetype()}', ' %f'])
-            endfunction
-            autocmd VimEnter * call AirlineOverwrite()
-        endif
+        " let g:airline_theme = "tomorrow"
+        " let g:airline_powerline_fonts = 0
+        " let g:airline#extensions#whitespace#enabled = 0
+        "
+        " silent! if emoji#available()
+        "     let s:ft_emoji = map({
+        "         \ 'c':              'baby_chick',
+        "         \ 'clojure':        'lollipop',
+        "         \ 'coffee':         'coffee',
+        "         \ 'cpp':            'chicken',
+        "         \ 'css':            'art',
+        "         \ 'eruby':          'ring',
+        "         \ 'gitcommit':      'soon',
+        "         \ 'haml':           'hammer',
+        "         \ 'help':           'angel',
+        "         \ 'html':           'herb',
+        "         \ 'java':           'older_man',
+        "         \ 'javascript':     'monkey',
+        "         \ 'javascript.jsx': 'monkey',
+        "         \ 'make':           'seedling',
+        "         \ 'markdown':       'book',
+        "         \ 'perl':           'camel',
+        "         \ 'python':         'snake',
+        "         \ 'ruby':           'gem',
+        "         \ 'scala':          'barber',
+        "         \ 'sh':             'shell',
+        "         \ 'slim':           'dancer',
+        "         \ 'text':           'books',
+        "         \ 'vim':            'pig',
+        "         \ 'yaml':           'yum',
+        "         \ 'yaml.jinja':     'yum'
+        "     \ }, 'emoji#for(v:val)')
+        "
+        "     function! S_filetype()
+        "     if empty(&filetype)
+        "       return emoji#for('grey_question')
+        "     else
+        "       return get(s:ft_emoji, &filetype, '['.&filetype.']')
+        "     endif
+        "     endfunction
+        "
+        "     function! AirlineOverwrite()
+        "         let g:airline_section_c = airline#section#create(['%{S_filetype()}', ' %f'])
+        "     endfunction
+        "     autocmd VimEnter * call AirlineOverwrite()
+        " endif
     " }
 " }
 
